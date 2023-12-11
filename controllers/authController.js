@@ -5,6 +5,7 @@ const errorResponse = require("../utils/errorResponse");
 // JWT TOKEN
 exports.sendToken = (user, statusCode, res) => {
   const token = user.getSignedToken(res);
+  console.log(user, token, "this is token");
   res.status(statusCode).json({
     success: true,
     token,
@@ -21,6 +22,8 @@ exports.registerContoller = async (req, res, next) => {
       return next(new errorResponse("Email is already registered", 500));
     }
     const user = await userModel.create({ username, email, password });
+    req.userid = user.id;
+
     this.sendToken(user, 201, res);
   } catch (error) {
     console.log(error);

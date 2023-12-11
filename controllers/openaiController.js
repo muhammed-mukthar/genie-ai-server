@@ -1,6 +1,7 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const { Configuration, OpenAIApi } = require("openai");
+const History = require("../models/historyModal");
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -132,7 +133,6 @@ exports.lofiImageController = async (req, res) => {
   }
 };
 
-
 exports.animeImageController = async (req, res) => {
   try {
     const { text } = req.body;
@@ -168,6 +168,19 @@ exports.emailController = async (req, res) => {
         return res.status(200).json(data.choices[0].text);
       }
     }
+  } catch (err) {
+    console.log(err);
+    return res.status(404).json({
+      message: err.message,
+    });
+  }
+};
+
+exports.historyController = async (req, res) => {
+  try {
+    let user = req.user;
+    const data = await History.find({ createdUser: user?._id });
+    return res.status(200).json(data);
   } catch (err) {
     console.log(err);
     return res.status(404).json({
